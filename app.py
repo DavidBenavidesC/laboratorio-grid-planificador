@@ -127,10 +127,18 @@ def simular():
         if con_detalle:
             item["detalle"] = r["detalle"]
         estrategias.append(item)
+        cluster = None
+    if str(datos.get("cluster", "0")).lower() in ("1", "true"):
+        ref = nucleo.comparar(nucleo.perfil_cluster(sitios), n_tareas=tareas,
+                              repeticiones=reps, semilla=semilla)
+        cluster = [{"clave": c, "nombre": r["nombre"], "makespan_medio": r["makespan_medio"],
+                    "makespan_sd": r["makespan_sd"], "eficiencia_media": r["eficiencia_media"]}
+                   for c, r in ref.items()]
     return jsonify(redondear({
         "config": {"perfil": perfil, "tareas": tareas, "repeticiones": reps, "semilla": semilla},
         "sitios": [asdict(s) for s in sitios],
         "estrategias": estrategias,
+        "cluster": cluster,
     }))
 
 
